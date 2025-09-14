@@ -389,11 +389,11 @@
 		
 		"AbilityValues"
 		{
-			"enemy_disarm_duration"	"3 5 7"
-			"ally_attack_speed_bonus"	"20 40 60"
+			"enemy_disarm_duration"	"5 5 7"
+			"ally_attack_speed_bonus"	"30 40 60"
 			"ally_lifesteal_percent"	"30"
-			"enemy_search_radius"	"5000"
-			"ally_search_radius"	"5000"
+			"enemy_search_radius"	"9999"
+			"ally_search_radius"	"9999"
 		}
 		
 		"Precache"
@@ -409,24 +409,25 @@
 		"ScriptFile"	"heroes/hero_death_prophet/death_prophet1_silence.lua"
 		"AbilityTextureName"	"death_prophet_silence"
 		"AbilityType"	"DOTA_ABILITY_TYPE_BASIC"
-		"AbilityUnitDamageType"	"DAMAGE_TYPE_NONE"
-		"AbilityBehavior"	"DOTA_ABILITY_BEHAVIOR_POINT"
+		"AbilityUnitDamageType"	"DAMAGE_TYPE_MAGICAL"
+		"AbilityBehavior"	"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
 		"MaxLevel"	"3"
 		"AbilityCooldown"	"0 0 0"
 		"AbilityManaCost"	"100"
 		"AbilityCastPoint"	"0.3"
-		"AbilityCastRange"	"900"
 		"AbilityCastAnimation"	"ACT_DOTA_CAST_ABILITY_2"
 		
 		"AbilityValues"
 		{
-			"silence_duration"	"3 5 7"
+			"damage"	"300"
+			"silence_duration"	"3"
 			"silence_radius"	"600"
+			"auto_cast_range"	"9999"
 		}
 		
 		"Precache"
 		{
-			"particle"	"particles/heroes/deat_prophet/death_prophet_silence.vpcf"
+			"particle"	"particles/heroes/death_prophet/death_prophet_silence.vpcf"
 			"soundfile"	"soundevents/game_sounds_heroes/game_sounds_death_prophet.vsndevts"
 		}
 	}
@@ -441,14 +442,14 @@
 		"AbilityBehavior"	"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
 		"MaxLevel"	"3"
 		"AbilityCooldown"	"0 0 0"
-		"AbilityManaCost"	"150"
+		"AbilityManaCost"	"100"
 		"AbilityCastPoint"	"0.3"
 		"AbilityCastAnimation"	"ACT_DOTA_CAST_ABILITY_1"
 		
 		"AbilityValues"
 		{
 			"heal_interval"	"1.0"
-			"heal_per_interval"	"15 25 35"
+			"heal_per_interval"	"20 30 50"
 			"heal_radius"	"800"
 			"duration"	"8.0"
 		}
