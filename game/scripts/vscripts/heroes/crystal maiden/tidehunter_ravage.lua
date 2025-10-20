@@ -34,27 +34,17 @@ function tidehunter_ravage:OnUpgrade()
             local current_mana = caster:GetMana()
             local max_mana = caster:GetMaxMana()
             
-            -- 调试信息（减少输出频率）
-            if current_mana >= max_mana then
-                print("Tidehunter Ravage Auto Cast Check - Mana Full! Current:", current_mana, "Max:", max_mana, "IsFullyCastable:", self:IsFullyCastable())
-            end
             
             if current_mana >= max_mana and self:IsFullyCastable() then
                 -- 检查是否有敌人或友军在范围内
                 local has_targets = self:HasTargetsInRange()
                 if has_targets then
-                    print("Tidehunter Ravage Auto Cast: Found targets, casting skill!")
                     -- 检查是否已经在施法
                     if not caster:IsChanneling() and not caster:IsSilenced() and not caster:IsStunned() then
-                        print("Tidehunter Ravage Auto Cast: Attempting to cast skill...")
                         -- 直接调用技能释放，让Dota 2自动处理Mana消耗
                         caster:CastAbilityNoTarget(self, caster:GetPlayerOwnerID())
                         self.last_cast_time = current_time -- 记录释放时间
-                    else
-                        print("Tidehunter Ravage Auto Cast: Caster is channeling/silenced/stunned")
                     end
-                else
-                    print("Tidehunter Ravage Auto Cast: No targets found")
                 end
             end
             
@@ -110,47 +100,27 @@ end
 function tidehunter_ravage:OnSpellStart()
     if not IsServer() then return end
     
-    print("=== TIDEHUNTER RAVAGE SPELL STARTED ===")
-    
     local caster = self:GetCaster()
-    print("Caster found:", caster:GetUnitName())
-    
     local caster_pos = caster:GetAbsOrigin()
-    print("Caster position:", caster_pos)
-    
-    -- Dota 2会自动处理Mana消耗，不需要手动检查
-    print("Spell execution started")
     
     -- 获取技能参数
     local damage = self:GetSpecialValueFor("damage")
     local radius = self:GetSpecialValueFor("radius")
     local heal_amount = self:GetSpecialValueFor("heal_amount")
     
-    print("Skill parameters - Damage:", damage, "Radius:", radius, "Heal amount:", heal_amount)
-    print("Caster position:", caster_pos)
-    print("Caster team:", caster:GetTeamNumber())
-    
     -- 创建冲击波粒子特效
-    print("Creating ravage particle effect...")
     
     local ravage_particle = ParticleManager:CreateParticle("particles/heroes/crystal_maiden/tide_2021_ravage.vpcf", PATTACH_WORLDORIGIN, nil)
-    print("ravage_particle index:", ravage_particle)
     if ravage_particle ~= -1 then
         ParticleManager:SetParticleControl(ravage_particle, 0, caster_pos)
         ParticleManager:SetParticleControl(ravage_particle, 1, Vector(radius, 0, 0))
         ParticleManager:ReleaseParticleIndex(ravage_particle)
-        print("ravage_particle created successfully")
-    else
-        print("Failed to create ravage_particle")
     end
     
     -- 播放音效
     EmitSoundOn("Ability.Ravage", caster)
     
     -- 直接对范围内的所有单位造成伤害和治疗
-    print("Applying damage and heal to all units in range:", radius)
-    print("Caster position:", caster_pos)
-    print("Caster team number:", caster:GetTeamNumber())
     
     -- 找到范围内的所有敌人
     local enemies = FindUnitsInRadius(
@@ -178,21 +148,10 @@ function tidehunter_ravage:OnSpellStart()
         false
     )
     
-    print("Found enemies:", #enemies, "Found allies:", #allies)
-    
-    -- 调试：列出所有找到的单位
-    for i, enemy in pairs(enemies) do
-        print("Enemy", i, ":", enemy:GetUnitName(), "at", enemy:GetAbsOrigin())
-    end
-    
-    for i, ally in pairs(allies) do
-        print("Ally", i, ":", ally:GetUnitName(), "at", ally:GetAbsOrigin())
-    end
     
     -- 对敌人造成伤害
     for _, enemy in pairs(enemies) do
         if enemy ~= caster then
-            print("Applying damage to enemy:", enemy:GetUnitName(), "Damage:", damage)
             local damage_table = {
                 victim = enemy,
                 attacker = caster,
@@ -209,7 +168,6 @@ function tidehunter_ravage:OnSpellStart()
     
     -- 对友军进行治疗
     for _, ally in pairs(allies) do
-        print("Healing ally:", ally:GetUnitName(), "Heal amount:", heal_amount)
         ally:Heal(heal_amount, caster)
         
         -- 显示治疗数字
@@ -219,7 +177,7 @@ function tidehunter_ravage:OnSpellStart()
         EmitSoundOn("Hero_Tidehunter.Ravage.Target", ally)
     end
     
-    -- 强制恢复角色状态，确保能继续攻击
+    -- 强制重置单位状态，确保能继续攻击
     caster:Stop()
     caster:MoveToPosition(caster:GetAbsOrigin())
 end

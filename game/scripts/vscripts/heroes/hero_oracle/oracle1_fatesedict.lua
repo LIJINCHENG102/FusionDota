@@ -9,7 +9,6 @@ LinkLuaModifier("modifier_oracle1_fatesedict_ally", "heroes/hero_oracle/oracle1_
 -- 自走棋式自动施法功能
 function oracle1_fatesedict:OnCreated()
     if not IsServer() then return end
-    print("Oracle Fates Edict: OnCreated called")
 end
 
 function oracle1_fatesedict:OnUpgrade()
@@ -17,13 +16,11 @@ function oracle1_fatesedict:OnUpgrade()
     
     local caster = self:GetCaster()
     
-    print("Oracle Fates Edict: OnUpgrade called for", caster:GetUnitName())
     
     if not self.auto_cast_timer then
         self.auto_cast_timer = true
         self.last_cast_time = 0
         
-        print("Oracle Fates Edict: Starting auto cast timer")
         
         local function CheckAutoCast()
             if not IsValidEntity(caster) or not caster:IsAlive() then
@@ -38,7 +35,6 @@ function oracle1_fatesedict:OnUpgrade()
             local current_mana = caster:GetMana()
             local max_mana = caster:GetMaxMana()
             
-            print("Oracle Fates Edict Auto Cast Check - Mana:", current_mana, "Max:", max_mana, "IsFullyCastable:", self:IsFullyCastable())
             
             if current_mana >= max_mana and self:IsFullyCastable() then
                 local enemy_search_radius = self:GetSpecialValueFor("enemy_search_radius")
@@ -46,7 +42,6 @@ function oracle1_fatesedict:OnUpgrade()
                 
                 if nearest_enemy then
                     if not caster:IsChanneling() and not caster:IsSilenced() and not caster:IsStunned() then
-                        print("Oracle Fates Edict: Auto casting skill!")
                         
                         local success = pcall(function()
                             caster:CastAbilityNoTarget(self, caster:GetPlayerOwnerID())
@@ -54,9 +49,7 @@ function oracle1_fatesedict:OnUpgrade()
                         
                         if success then
                             self.last_cast_time = current_time
-                            print("Oracle Fates Edict: Auto cast successful!")
                         else
-                            print("Oracle Fates Edict: Auto cast failed!")
                         end
                     end
                 end
@@ -78,24 +71,19 @@ end
 
 
 function oracle1_fatesedict:OnSpellStart()
-    print("=== ORACLE FATES EDICT OnSpellStart CALLED ===")
     local caster = self:GetCaster()
     local enemy_search_radius = self:GetSpecialValueFor("enemy_search_radius")
     
-    print("Oracle Fates Edict: Caster =", caster:GetUnitName())
-    print("Oracle Fates Edict: Enemy search radius =", enemy_search_radius)
     
     -- 第一步：找到距离最近的敌方单位
     local nearest_enemy = self:FindNearestEnemy(caster, enemy_search_radius)
     
     if not nearest_enemy then
-        print("Oracle Fates Edict: No enemy found in range")
         return
     end
     
     -- 对敌方单位施加缴械效果
     local disarm_duration = self:GetSpecialValueFor("enemy_disarm_duration")
-    print("Oracle Fates Edict: Disarm duration =", disarm_duration)
     nearest_enemy:AddNewModifier(caster, self, "modifier_oracle1_fatesedict_enemy", {duration = disarm_duration})
     
     -- 播放特效
@@ -108,7 +96,6 @@ function oracle1_fatesedict:OnSpellStart()
         modifier:AddParticle(particle, false, false, -1, false, false)
     end
     
-    print("Oracle Fates Edict: Applied disarm to enemy " .. nearest_enemy:GetUnitName() .. " for " .. disarm_duration .. " seconds")
     
     -- 第二步：找到距离这名敌方单位最近的友方单位
     local ally_search_radius = self:GetSpecialValueFor("ally_search_radius")
@@ -137,7 +124,6 @@ function oracle1_fatesedict:OnSpellStart()
             modifier:AddParticle(particle, false, false, -1, false, false)
         end
         
-        print("Oracle Fates Edict: Applied buff to ally " .. nearest_ally_to_enemy:GetUnitName() .. " (nearest to enemy " .. nearest_enemy:GetUnitName() .. ") with " .. attack_speed_bonus .. "% attack speed and " .. lifesteal_percent .. "% lifesteal for " .. disarm_duration .. " seconds")
     else
         -- 如果敌人周围没有友军，增益buff给到施法者自己
         local attack_speed_bonus = self:GetSpecialValueFor("ally_attack_speed_bonus")
@@ -161,15 +147,10 @@ function oracle1_fatesedict:OnSpellStart()
             modifier:AddParticle(particle, false, false, -1, false, false)
         end
         
-        print("Oracle Fates Edict: No ally found near enemy, applied buff to caster " .. caster:GetUnitName() .. " with " .. attack_speed_bonus .. "% attack speed and " .. lifesteal_percent .. "% lifesteal for " .. disarm_duration .. " seconds")
     end
     
     -- 播放音效
     EmitSoundOn("Hero_Oracle.FatesEdict", caster)
-    
-    -- 重置单位状态，确保继续普通攻击
-    caster:Stop()
-    caster:MoveToPosition(caster:GetAbsOrigin())
 end
 
 -- 找到距离最近的敌方单位
@@ -186,14 +167,11 @@ function oracle1_fatesedict:FindNearestEnemy(caster, radius)
         false
     )
     
-    print("Oracle Fates Edict: Found", #enemies, "enemies in radius", radius)
     
     if #enemies > 0 then
-        print("Oracle Fates Edict: Nearest enemy is", enemies[1]:GetUnitName())
         return enemies[1]  -- 返回最近的敌方单位
     end
     
-    print("Oracle Fates Edict: No enemies found")
     return nil
 end
 

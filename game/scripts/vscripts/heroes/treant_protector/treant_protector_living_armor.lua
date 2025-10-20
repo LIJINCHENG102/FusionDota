@@ -64,10 +64,6 @@ function treant_protector_living_armor:AutoCastOnSelf()
     
     -- 使用CastAbilityNoTarget来释放技能
     caster:CastAbilityNoTarget(self, caster:GetPlayerOwnerID())
-    
-    -- 重置单位状态，确保能继续正常攻击
-    caster:Stop()
-    caster:MoveToPosition(caster:GetAbsOrigin())
 end
 
 function treant_protector_living_armor:OnSpellStart()

@@ -8,7 +8,6 @@ LinkLuaModifier("modifier_lion_hex", "heroes/hero_lion/lion_hex.lua", LUA_MODIFI
 -- 自走棋式自动施法功能
 function lion_hex:OnCreated()
     if not IsServer() then return end
-    print("Lion Hex: OnCreated called")
 end
 
 function lion_hex:OnUpgrade()
@@ -16,13 +15,11 @@ function lion_hex:OnUpgrade()
     
     local caster = self:GetCaster()
     
-    print("Lion Hex: OnUpgrade called for", caster:GetUnitName())
     
     if not self.auto_cast_timer then
         self.auto_cast_timer = true
         self.last_cast_time = 0
         
-        print("Lion Hex: Starting auto cast timer")
         
         local function CheckAutoCast()
             if not IsValidEntity(caster) or not caster:IsAlive() then
@@ -37,22 +34,18 @@ function lion_hex:OnUpgrade()
             local current_mana = caster:GetMana()
             local max_mana = caster:GetMaxMana()
             
-            print("Lion Hex Auto Cast Check - Mana:", current_mana, "Max:", max_mana, "IsFullyCastable:", self:IsFullyCastable())
             
             if current_mana >= max_mana and self:IsFullyCastable() then
                 local target = self:FindNearestEnemy()
                 if target then
                     if not caster:IsChanneling() and not caster:IsSilenced() and not caster:IsStunned() then
-                        print("Lion Hex: Auto casting skill!")
                         
                         local success = pcall(function()
                             caster:CastAbilityNoTarget(self, caster:GetPlayerOwnerID())
                         end)
                         
                         if success then
-                            print("Lion Hex: CastAbilityNoTarget succeeded")
                         else
-                            print("Lion Hex: CastAbilityNoTarget failed")
                         end
                         
                         self.last_cast_time = current_time
@@ -70,7 +63,6 @@ function lion_hex:FindNearestEnemy()
     local caster = self:GetCaster()
     local auto_cast_range = self:GetSpecialValueFor("auto_cast_range")
     
-    print("Lion Hex: Checking for enemies in range", auto_cast_range)
     
     local enemies = FindUnitsInRadius(
         caster:GetTeamNumber(),
@@ -84,7 +76,6 @@ function lion_hex:FindNearestEnemy()
         false
     )
     
-    print("Lion Hex: Found", #enemies, "enemies in range")
     
     if #enemies == 0 then
         return nil
@@ -105,9 +96,7 @@ function lion_hex:FindNearestEnemy()
     end
     
     if nearest_enemy then
-        print("Lion Hex: Nearest enemy found:", nearest_enemy:GetUnitName(), "at distance:", min_distance)
     else
-        print("Lion Hex: No valid enemy found")
     end
     
     return nearest_enemy
@@ -120,15 +109,12 @@ function lion_hex:Precache(context)
 end
 
 function lion_hex:OnSpellStart()
-    print("=== LION HEX OnSpellStart CALLED ===")
     
     local caster = self:GetCaster()
     local target = self:FindNearestEnemy()
     
-    print("Lion Hex: Target found:", target and target:GetUnitName() or "nil")
     
     if not target or target:IsNull() or not target:IsAlive() then
-        print("Lion Hex: No valid target found")
         return
     end
     
@@ -144,7 +130,7 @@ function lion_hex:OnSpellStart()
     ParticleManager:SetParticleControl(particle, 0, target:GetAbsOrigin())
     ParticleManager:ReleaseParticleIndex(particle)
     
-    -- 重置单位状态，确保继续普通攻击
+    -- 强制重置单位状态，确保能继续攻击
     caster:Stop()
     caster:MoveToPosition(caster:GetAbsOrigin())
 end
@@ -197,7 +183,6 @@ function modifier_lion_hex:ChangeModelToFrog(parent)
                 -- 强制刷新模型
                 parent:SetModelScale(0.8)
                 
-                print("Lion Hex: Successfully changed model to " .. model_path)
                 model_changed = true
             end)
             
@@ -208,7 +193,6 @@ function modifier_lion_hex:ChangeModelToFrog(parent)
     end
     
     if not model_changed then
-        print("Lion Hex: Failed to change model, using original")
     end
 end
 
@@ -223,7 +207,6 @@ function modifier_lion_hex:OnDestroy()
         parent:SetModelScale(self.original_model_scale or 1.0)
         parent:SetOriginalModel(self.original_model)
         
-        print("Lion Hex removed from: " .. parent:GetUnitName() .. ", Model restored to: " .. self.original_model)
     end
 end
 

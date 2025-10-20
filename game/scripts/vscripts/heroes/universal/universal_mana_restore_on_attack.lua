@@ -25,7 +25,6 @@ end
 
 function modifier_universal_mana_restore_on_attack:OnCreated()
     if not IsServer() then return end
-    print("Universal Mana Restore modifier created on:", self:GetParent():GetUnitName())
 end
 
 function modifier_universal_mana_restore_on_attack:DeclareFunctions()
@@ -53,5 +52,4 @@ function modifier_universal_mana_restore_on_attack:OnAttackLanded(keys)
     caster:GiveMana(mana_restore_amount)
     
     -- 调试信息
-    print("Universal Mana Restore: Restored " .. mana_restore_amount .. " mana to " .. caster:GetUnitName())
 end

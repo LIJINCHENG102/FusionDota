@@ -21,9 +21,10 @@ function ursa_earthshock:OnUpgrade()
             end
             
             local current_time = GameRules:GetGameTime()
-            if current_time - self.last_cast_time < 1.0 then
-                return 0.1
-            end
+            -- 移除冷却时间限制，实现真正的0CD
+            -- if current_time - self.last_cast_time < 1.0 then
+            --     return 0.1
+            -- end
             
             local current_mana = caster:GetMana()
             local max_mana = caster:GetMaxMana()
@@ -99,12 +100,6 @@ function ursa_earthshock:OnSpellStart()
         false
     )
     
-    print("=== Ursa Earthshock ===")
-    print("Caster:", caster:GetUnitName())
-    print("Radius:", radius)
-    print("Damage:", damage)
-    print("Slow Duration:", slow_duration)
-    print("Enemies in range:", #enemies)
     
     -- 对每个敌人造成伤害和攻速降低效果
     for _, enemy in pairs(enemies) do
@@ -122,13 +117,8 @@ function ursa_earthshock:OnSpellStart()
             -- 施加攻速降低效果
             enemy:AddNewModifier(caster, self, "modifier_ursa_earthshock_slow", {duration = slow_duration})
             
-            print("Applied damage and slow to", enemy:GetUnitName())
         end
     end
-    
-    -- 强制恢复角色状态，确保能继续攻击
-    caster:Stop()
-    caster:MoveToPosition(caster:GetAbsOrigin())
 end
 
 -- 攻速降低修饰符
@@ -151,20 +141,15 @@ function modifier_ursa_earthshock_slow:OnCreated(params)
     
     self.ability = self:GetAbility()
     if not self.ability then 
-        print("ERROR: No ability found in modifier")
         return 
     end
     
     self.attackspeed_slow = self.ability:GetSpecialValueFor("attackspeed_slow")
     
     if not self.attackspeed_slow then
-        print("ERROR: attackspeed_slow value not found, using default 15")
         self.attackspeed_slow = 15
     end
     
-    print("=== Attack Speed Slow modifier created ===")
-    print("Target:", self:GetParent():GetUnitName())
-    print("Attack Speed Slow:", self.attackspeed_slow)
 end
 
 function modifier_ursa_earthshock_slow:DeclareFunctions()

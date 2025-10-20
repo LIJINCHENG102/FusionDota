@@ -50,24 +50,19 @@ function windrunner_powershot:OnUpgrade()
             
             -- 调试信息（减少输出频率）
             if current_mana >= max_mana then
-                print("Auto Cast Check - Mana Full! Current:", current_mana, "Max:", max_mana, "IsFullyCastable:", self:IsFullyCastable())
             end
             
             if current_mana >= max_mana and self:IsFullyCastable() then
                 local nearest_enemy_pos = self:FindNearestEnemy()
                 if nearest_enemy_pos then
-                    print("Auto Cast: Found enemy, casting skill!")
                     -- 检查是否已经在施法
                     if not caster:IsChanneling() and not caster:IsSilenced() and not caster:IsStunned() then
-                        print("Auto Cast: Attempting to cast skill...")
                         -- 直接释放技能，让Dota 2自动处理Mana消耗
                         caster:CastAbilityOnPosition(nearest_enemy_pos, self, caster:GetPlayerOwnerID())
                         self.last_cast_time = current_time -- 记录释放时间
                     else
-                        print("Auto Cast: Caster is channeling/silenced/stunned")
                     end
                 else
-                    print("Auto Cast: No enemy found")
                 end
             end
             
@@ -131,9 +126,7 @@ function windrunner_powershot:OnSpellStart()
     -- 播放施法特效
     self:PlayCastEffects()
     
-    -- 强制恢复角色状态，确保能继续攻击
-    caster:Stop()
-    caster:MoveToPosition(caster:GetAbsOrigin())
+    -- 技能释放完成，单位可以继续攻击
 end
 
 function windrunner_powershot:FindNearestEnemy()
@@ -180,7 +173,6 @@ function windrunner_powershot:OnProjectileHit(target, location)
     local actual_damage = damage - (self.penetration_count - 1) * damage_reduction
     actual_damage = math.max(actual_damage, 0) -- 确保伤害不为负数
     
-    print("Powershot hit target", self.penetration_count, "damage:", actual_damage, "original:", damage)
     
     -- 应用伤害
     local damage_table = {

@@ -4,7 +4,6 @@
 -- 黑洞思考函数 - 必须在全局作用域
 function BlackHoleThink(thinker)
     if not IsValidEntity(thinker) then
-        print("Thinker is invalid, stopping think")
         return nil
     end
     
@@ -242,7 +241,6 @@ function enigma_black_hole:OnSpellStart()
         -- Control 3: 持续时间或其他参数
         ParticleManager:SetParticleControl(particle, 3, Vector(duration, 0, 0))
         
-        print("Black Hole Particle: Radius set to", radius)
     end
     
     -- 保存粒子引用到技能实例中

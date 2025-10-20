@@ -73,10 +73,6 @@ function lina_light_strike_array:OnSpellStart()
     
     local caster = self:GetCaster()
     
-    -- 强制恢复角色状态，确保能继续攻击
-    caster:Stop()
-    caster:MoveToPosition(caster:GetAbsOrigin())
-    
     -- 查找最近敌人
     local target = self:FindNearestEnemy()
     if not target then
@@ -122,11 +118,6 @@ function lina_light_strike_array:OnSpellStart()
                 false
             )
             
-            print("=== Lina Light Strike Array ===")
-            print("Target:", target:GetUnitName())
-            print("AOE:", aoe)
-            print("Damage:", damage)
-            print("Enemies in range:", #enemies)
             
             -- 对每个敌人造成伤害和灼烧效果
             for _, enemy in pairs(enemies) do
@@ -144,7 +135,6 @@ function lina_light_strike_array:OnSpellStart()
                     -- 施加灼烧效果
                     enemy:AddNewModifier(caster, self, "modifier_lina_light_strike_array_burn", {})
                     
-                    print("Applied damage and burn to", enemy:GetUnitName())
                 end
             end
             
@@ -190,11 +180,6 @@ function modifier_lina_light_strike_array_burn:OnCreated(params)
     -- 开始灼烧计时器
     self:StartIntervalThink(self.interval)
     
-    print("=== Burn modifier created ===")
-    print("Target:", self.parent:GetUnitName())
-    print("Damage percent:", self.damage_percent)
-    print("Interval:", self.interval)
-    print("Duration:", self.duration)
 end
 
 function modifier_lina_light_strike_array_burn:OnIntervalThink()
@@ -237,15 +222,11 @@ function modifier_lina_light_strike_array_burn:OnIntervalThink()
         local mana_restore = self.ability:GetSpecialValueFor("light_strike_array_mana_restore")
         self.caster:GiveMana(mana_restore)
         
-        print("=== Burn kill detected ===")
-        print("Killed by burn:", self.parent:GetUnitName())
-        print("Mana restored to", self.caster:GetUnitName(), ":", mana_restore)
         
         -- 播放击杀音效
         EmitSoundOn("Hero_Lina.LightStrikeArray.Target", self.parent)
     end
     
-    print("Burn damage to", self.parent:GetUnitName(), ":", burn_damage, "Health before:", health_before, "Health after:", self.parent:GetHealth())
 end
 
 function modifier_lina_light_strike_array_burn:GetEffectName()

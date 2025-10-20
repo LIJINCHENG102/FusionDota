@@ -25,7 +25,6 @@ end
 
 function modifier_axe_battle_hunger_custom:OnCreated()
     if IsServer() then
-        print("=== axe_battle_hunger_custom modifier created ===")
         -- 创建粒子特效
         self:CreateParticleEffect()
         -- 初始化调试输出冷却
@@ -86,10 +85,6 @@ function modifier_axe_battle_hunger_custom:GetModifierAttackSpeedBonus_Constant(
     -- 调试信息（每5秒输出一次）
     local current_time = GameRules:GetGameTime()
     if bonus > 0 and (current_time - (self.last_debug_time or 0)) >= 5.0 then
-        print("=== axe_battle_hunger_custom attack speed bonus ===")
-        print("Current health:", current_health, "/", max_health)
-        print("Missing health %:", missing_health_pct)
-        print("Attack speed bonus:", bonus)
         self.last_debug_time = current_time
     end
     
@@ -115,10 +110,6 @@ function modifier_axe_battle_hunger_custom:GetModifierLifesteal()
     -- 调试信息（每5秒输出一次）
     local current_time = GameRules:GetGameTime()
     if bonus > 0 and (current_time - (self.last_debug_time or 0)) >= 5.0 then
-        print("=== axe_battle_hunger_custom lifesteal bonus ===")
-        print("Current health:", current_health, "/", max_health)
-        print("Missing health %:", missing_health_pct)
-        print("Lifesteal bonus:", bonus)
         self.last_debug_time = current_time
     end
     
@@ -161,11 +152,6 @@ function modifier_axe_battle_hunger_custom:OnAttackLanded(params)
             -- 调试信息
             local current_time = GameRules:GetGameTime()
             if (current_time - (self.last_debug_time or 0)) >= 5.0 then
-                print("=== axe_battle_hunger_custom lifesteal triggered ===")
-                print("Attack damage:", attack_damage)
-                print("Lifesteal bonus:", lifesteal_bonus, "%")
-                print("Lifesteal amount:", lifesteal_amount)
-                print("Health restored:", new_health - parent:GetHealth())
                 self.last_debug_time = current_time
             end
         end

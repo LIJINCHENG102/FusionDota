@@ -36,16 +36,13 @@ function mars_spear:OnUpgrade()
             
             -- 调试信息（减少输出频率）
             if current_mana >= max_mana then
-                print("Mars Spear Auto Cast Check - Mana Full! Current:", current_mana, "Max:", max_mana, "IsFullyCastable:", self:IsFullyCastable())
             end
             
             if current_mana >= max_mana and self:IsFullyCastable() then
                 local nearest_enemy = self:FindNearestEnemy()
                 if nearest_enemy then
-                    print("Mars Spear Auto Cast: Found enemy, casting skill!")
                     -- 检查是否已经在施法
                     if not caster:IsChanneling() and not caster:IsSilenced() and not caster:IsStunned() then
-                        print("Mars Spear Auto Cast: Attempting to cast skill...")
                         -- 检查目标是否有效
                         if nearest_enemy and IsValidEntity(nearest_enemy) then
                             -- 设置自动释放目标
@@ -54,13 +51,10 @@ function mars_spear:OnUpgrade()
                             caster:CastAbilityOnPosition(nearest_enemy:GetAbsOrigin(), self, caster:GetPlayerOwnerID())
                             self.last_cast_time = current_time -- 记录释放时间
                         else
-                            print("Mars Spear Auto Cast: Target is invalid or nil")
                         end
                     else
-                        print("Mars Spear Auto Cast: Caster is channeling/silenced/stunned")
                     end
                 else
-                    print("Mars Spear Auto Cast: No enemy found")
                 end
             end
             
@@ -114,7 +108,6 @@ function mars_spear:OnSpellStart()
     local chain_damage = self:GetSpecialValueFor("chain_damage")
     local chain_stun_duration = self:GetSpecialValueFor("chain_stun_duration")
     
-    print("Mars Spear parameters - Damage:", damage, "Chain damage:", chain_damage, "Chain stun duration:", chain_stun_duration)
     
     -- 创建投射物
     local direction = (point - caster:GetAbsOrigin()):Normalized()
@@ -161,10 +154,6 @@ function mars_spear:OnSpellStart()
     
     -- 播放施法音效
     EmitSoundOn("Hero_Mars.Spear.Cast", caster)
-    
-    -- 强制恢复角色状态，确保能继续攻击
-    caster:Stop()
-    caster:MoveToPosition(caster:GetAbsOrigin())
 end
 
 function mars_spear:OnProjectileHit(target, location)
@@ -191,7 +180,6 @@ function mars_spear:OnProjectileHit(target, location)
     
     -- 检查是否是第一次击中
     if not self.first_hit then
-        print("Mars Spear First hit on target:", target:GetUnitName(), "Damage:", damage)
         -- 造成初始伤害
         local damage_table = {
             victim = target,
@@ -212,7 +200,6 @@ function mars_spear:OnProjectileHit(target, location)
         return false -- 继续投射物移动
     else
         -- 这是连锁碰撞，造成额外伤害和眩晕
-        print("Mars Spear Chain hit on target:", target:GetUnitName(), "Chain damage:", chain_damage)
         local chain_damage_table = {
             victim = target,
             attacker = caster,
@@ -269,7 +256,6 @@ function mars_spear:OnProjectileThink(location)
         -- 找到最近的敌人（不是被携带的目标）
         for _, enemy in pairs(enemies) do
             if enemy ~= self.carried_target and enemy:IsAlive() then
-                print("Mars Spear Chain collision detected - Carried target:", self.carried_target:GetUnitName(), "Hit target:", enemy:GetUnitName())
                 -- 标记已发生碰撞，避免重复处理
                 self.has_collided = true
                 

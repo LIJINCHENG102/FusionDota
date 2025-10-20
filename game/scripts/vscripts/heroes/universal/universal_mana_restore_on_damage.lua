@@ -25,7 +25,6 @@ end
 
 function modifier_universal_mana_restore_on_damage:OnCreated()
     if not IsServer() then return end
-    print("Universal Mana Restore on Damage modifier created on:", self:GetParent():GetUnitName())
 end
 
 function modifier_universal_mana_restore_on_damage:DeclareFunctions()
@@ -52,5 +51,4 @@ function modifier_universal_mana_restore_on_damage:OnTakeDamage(keys)
     unit:GiveMana(mana_restore_amount)
     
     -- 调试信息
-    print("Universal Mana Restore on Damage: Restored " .. mana_restore_amount .. " mana to " .. unit:GetUnitName() .. " (damage: " .. damage .. ")")
 end

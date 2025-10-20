@@ -5,7 +5,6 @@
 
 ember_spirit_inner_Fire = class({})
 
-print("=== EMBER SPIRIT INNER FIRE SCRIPT LOADED ===")
 
 -- 自走棋式自动施法功能 (复制Ursa的成功实现)
 function ember_spirit_inner_Fire:OnUpgrade()
@@ -34,7 +33,6 @@ function ember_spirit_inner_Fire:OnUpgrade()
                 local has_enemies = self:HasEnemiesInRange()
                 if has_enemies then
                     if not caster:IsChanneling() and not caster:IsSilenced() and not caster:IsStunned() then
-                        print("Ember Inner Fire Auto Cast: Found enemies, casting skill!")
                         caster:CastAbilityNoTarget(self, caster:GetPlayerOwnerID())
                         self.last_cast_time = current_time
                     end
@@ -74,7 +72,6 @@ function ember_spirit_inner_Fire:OnSpellStart()
         return
     end
     
-    print("=== EMBER SPIRIT INNER FIRE SPELL STARTED ===")
     
     -- 获取技能参数
     local damage = ability:GetSpecialValueFor("damage")
@@ -155,4 +152,8 @@ function ember_spirit_inner_Fire:OnSpellStart()
             ApplyDamage(damage_table)
         end
     end
+    
+    -- 强制重置单位状态，确保能继续攻击
+    caster:Stop()
+    caster:MoveToPosition(caster:GetAbsOrigin())
 end

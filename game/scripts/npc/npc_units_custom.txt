@@ -56,7 +56,7 @@
 	{
 		"BaseClass"	"npc_dota_creature"
 		"Ability1"	"windrunner_powershot"
-		"Ability2"	""
+		"Ability2"	"ludens_echo"
 		"Ability3"	""
 		"Ability4"	""
 		"Ability5"	""
