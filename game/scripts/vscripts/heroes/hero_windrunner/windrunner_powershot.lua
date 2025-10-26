@@ -38,11 +38,11 @@ function windrunner_powershot:OnUpgrade()
                 return -- 停止定时器
             end
             
-            -- 检查冷却时间（防止频繁尝试）
+            -- 移除冷却时间限制，实现真正的0CD
             local current_time = GameRules:GetGameTime()
-            if current_time - self.last_cast_time < 1.0 then
-                return 0.1 -- 继续定时器，但跳过这次检查
-            end
+            -- if current_time - self.last_cast_time < 1.0 then
+            --     return 0.1 -- 继续定时器，但跳过这次检查
+            -- end
             
             -- 检查Mana是否回满（达到最大Mana值）
             local current_mana = caster:GetMana()

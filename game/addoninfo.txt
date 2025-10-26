@@ -6,6 +6,7 @@
 	maps = 
 	[
 		"temp",
+		"battlemap",
 	]
 	CheckAFKPlayers = false
 	DefaultMap = "temp"
@@ -15,7 +16,9 @@
 	DisableIK = false
 	EnablePickRules = false
 	EventGame = false
-	hero_picker = null
+	hero_picker = 
+	{
+	}
 	HeroGuidesSupported = false
 	ForceDefaultGuide = false
 	MinimalPrecache = false
@@ -25,6 +28,9 @@
 	[
 		{
 			map = "temp"
+		},
+		{
+			map = "battlemap"
 		},
 	]
 	PenaltiesEnabled = false

@@ -1,16 +1,30 @@
 {
-    "include": ["src", "../../shared"],
     "compilerOptions": {
-        "target": "es2017",
-        "lib": ["es2017"],
-        "resolveJsonModule": true,
-        "types": ["@moddota/panorama-types"],
+        "target": "ES2018",
+        "lib": ["ES2018", "DOM"],
+        "module": "ESNext",
         "moduleResolution": "node",
-        "strict": true,
-        "preserveSymlinks": false,
         "allowSyntheticDefaultImports": true,
-        "sourceMap": true,
-        "jsx": "react-jsx",
-        "jsxImportSource": "react",
-    }
+        "esModuleInterop": true,
+        "jsx": "react",
+        "jsxFactory": "React.createElement",
+        "declaration": false,
+        "outDir": "../../game/scripts/vscripts/panorama",
+        "baseUrl": "./src",
+        "paths": {
+            "@/*": ["./*"]
+        },
+        "strict": false,
+        "skipLibCheck": true,
+        "noImplicitAny": false
+    },
+    "include": [
+        "src/**/*",
+        "src/types/**/*.d.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts",
+        "**/*.test.ts"
+    ]
 }

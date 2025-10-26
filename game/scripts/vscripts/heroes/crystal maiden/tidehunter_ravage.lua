@@ -24,11 +24,11 @@ function tidehunter_ravage:OnUpgrade()
                 return -- 停止定时器
             end
             
-            -- 检查冷却时间（防止频繁尝试）
+            -- 移除冷却时间限制，实现真正的0CD
             local current_time = GameRules:GetGameTime()
-            if current_time - self.last_cast_time < 1.5 then
-                return 0.1 -- 继续定时器，但跳过这次检查
-            end
+            -- if current_time - self.last_cast_time < 1.5 then
+            --     return 0.1 -- 继续定时器，但跳过这次检查
+            -- end
             
             -- 检查Mana是否回满（达到最大Mana值）
             local current_mana = caster:GetMana()
@@ -177,7 +177,7 @@ function tidehunter_ravage:OnSpellStart()
         EmitSoundOn("Hero_Tidehunter.Ravage.Target", ally)
     end
     
-    -- 强制重置单位状态，确保能继续攻击
-    caster:Stop()
-    caster:MoveToPosition(caster:GetAbsOrigin())
+    -- 移除强制停止，让单位继续正常攻击
+    -- caster:Stop()
+    -- caster:MoveToPosition(caster:GetAbsOrigin())
 end

@@ -6,6 +6,10 @@ LinkLuaModifier("modifier_ursa_earthshock_slow", "heroes/hero_ursa/ursa_earthsho
 
 ursa_earthshock = class({})
 
+function ursa_earthshock:GetCooldown(level)
+    return 0 -- 确保技能没有冷却时间
+end
+
 function ursa_earthshock:OnUpgrade()
     if not IsServer() then return end
     

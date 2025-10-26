@@ -21,10 +21,11 @@ function ember_spirit_inner_Fire:OnUpgrade()
                 return
             end
             
+            -- 移除冷却时间限制，实现真正的0CD
             local current_time = GameRules:GetGameTime()
-            if current_time - self.last_cast_time < 1.0 then
-                return 0.1
-            end
+            -- if current_time - self.last_cast_time < 1.0 then
+            --     return 0.1
+            -- end
             
             local current_mana = caster:GetMana()
             local max_mana = caster:GetMaxMana()

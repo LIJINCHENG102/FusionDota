@@ -36,7 +36,7 @@
 		"AbilityCastAnimation"	"ACT_DOTA_CAST_ABILITY_1"
 		"IsHidden"	"1"
 	}
-	
+
 //单位技能部分
 
 	"windrunner_powershot"
@@ -119,6 +119,8 @@
 		"AbilityCooldown"	"0 0 0"
 		"AbilityManaCost"	"150 150 150"
 		"AbilityCastPoint"	"0.0"
+		"AbilityCastAnimation"	"ACT_DOTA_CAST_ABILITY_1"
+		"AbilityChannelTime"	"1.0"
 		"AbilitySound"	"Ability.Ravage"
 		"AbilityDamage"	"400 400 400"
 		
@@ -452,7 +454,75 @@
 			"soundfile"	"soundevents/game_sounds_heroes/game_sounds_enchantress.vsndevts"
 		}
 	}
+	
+	"ogre_magi_fireblast"
+	{
+		"BaseClass"	"ability_lua"
+		"ScriptFile"	"heroes/hero_ogre_magi/ogre_magi_fireblast.lua"
+		"AbilityTextureName"	"ogre_magi_fireblast"
+		"AbilityType"	"DOTA_ABILITY_TYPE_BASIC"
+		"AbilityUnitDamageType"	"DAMAGE_TYPE_MAGICAL"
+		"AbilityBehavior"	"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"MaxLevel"	"3"
+		"AbilityCooldown"	"0 0 0"
+		"AbilityManaCost"	"80 80 80"
+		"AbilityCastPoint"	"0.0"
+		"AbilityCastRange"	"9999"
+		"AbilitySound"	"Hero_OgreMagi.Fireblast.Cast"
+		"AbilityDamage"	"250 250 250"
+		
+		"AbilityValues"
+		{
+			"damage"	"250 250 250"
+			"stun_duration"	"1.0"
+			"auto_cast_range"	"9999"
+			"multicast_chance_self"	"25"
+			"multicast_chance_1"	"25"
+			"multicast_chance_2"	"25"
+			"multicast_chance_3"	"25"
+		}
+		
+		"Precache"
+		{
+			"particle"	"particles/heroes/ogre_magi/ogre_magi_fireblast.vpcf"
+			"soundfile"	"soundevents/game_sounds_heroes/game_sounds_ogre_magi.vsndevts"
+		}
+	}
 
+	"zeus_Thundergods_Wrath"
+	{
+		"BaseClass"	"ability_lua"
+		"ScriptFile"	"heroes/hero_zeus/zeus_thundergods_wrath.lua"
+		"AbilityTextureName"	"zuus_thundergods_wrath"
+		"AbilityType"	"DOTA_ABILITY_TYPE_BASIC"
+		"AbilityUnitDamageType"	"DAMAGE_TYPE_MAGICAL"
+		"AbilityBehavior"	"DOTA_ABILITY_BEHAVIOR_NO_TARGET"
+		"MaxLevel"	"1"
+		"AbilityCooldown"	"0"
+		"AbilityManaCost"	"0"
+		"AbilityCastPoint"	"0.0"
+		"IsHidden"	"0"
+
+		"AbilityValues"
+		{
+			"resistance_reduction_armor"	"1"
+			"resistance_reduction_magic"	"1"
+			"resistance_reduction_duration"	"10"
+			"arc_lightning_damage"	"100"
+			"arc_lightning_bounces"	"3"
+			"thundergods_wrath_damage"	"300"
+			"arc_lightning_range"	"700"
+			"thundergods_wrath_range"	"9999"
+		}
+
+		"Precache"
+		{
+			"particle"	"particles/heroes/zeus/zuus_arc_lightning.vpcf"
+			"particle"	"particles/heroes/zeus/zuus_thundergods_wrath.vpcf"
+			"particle"	"particles/heroes/zeus/zuus_thundergods_wrath_start.vpcf"
+			"soundfile"	"soundevents/game_sounds_heroes/game_sounds_zuus.vsndevts"
+		}
+	}
 	//Rogue技能部分
 
 	"vampiric_vitality"
@@ -652,6 +722,50 @@
 			"damage_multiplier"	"1.0"
 		}
 	}
+
+	"double_cast"
+	{
+		"BaseClass"	"ability_lua"
+		"ScriptFile"	"heroes/universal/double_cast.lua"
+		"AbilityTextureName"	"item_refresher"
+		"AbilityType"	"DOTA_ABILITY_TYPE_PASSIVE"
+		"AbilityUnitDamageType"	"DAMAGE_TYPE_NONE"
+		"AbilityBehavior"	"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"MaxLevel"	"1"
+		"AbilityCooldown"	"0"
+		"AbilityManaCost"	"0"
+		"AbilityCastPoint"	"0.0"
+		"AbilityCastAnimation"	"ACT_DOTA_CAST_ABILITY_1"
+		"IsHidden"	"1"
+		
+		"AbilityValues"
+		{
+			"double_cast_chance"	"15"
+		}
+	}
+
+	"living_bomb"
+	{
+		"BaseClass"	"ability_lua"
+		"ScriptFile"	"heroes/universal/living_bomb.lua"
+		"AbilityTextureName"	"item_cyclone"
+		"AbilityType"	"DOTA_ABILITY_TYPE_PASSIVE"
+		"AbilityUnitDamageType"	"DAMAGE_TYPE_MAGICAL"
+		"AbilityBehavior"	"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"MaxLevel"	"1"
+		"AbilityCooldown"	"0"
+		"AbilityManaCost"	"0"
+		"AbilityCastPoint"	"0.0"
+		"IsHidden"	"1"
+		
+		"AbilityValues"
+		{
+			"explosion_damage"	"200"
+			"explosion_radius"	"200"
+		}
+	}
+
+	
 
 
 }

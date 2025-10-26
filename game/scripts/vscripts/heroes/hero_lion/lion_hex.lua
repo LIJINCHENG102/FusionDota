@@ -26,10 +26,11 @@ function lion_hex:OnUpgrade()
                 return
             end
             
+            -- 移除冷却时间限制，实现真正的0CD
             local current_time = GameRules:GetGameTime()
-            if current_time - self.last_cast_time < 1.0 then
-                return 0.1
-            end
+            -- if current_time - self.last_cast_time < 1.0 then
+            --     return 0.1
+            -- end
             
             local current_mana = caster:GetMana()
             local max_mana = caster:GetMaxMana()
@@ -81,22 +82,43 @@ function lion_hex:FindNearestEnemy()
         return nil
     end
     
-    -- 找到距离最近的敌方单位
-    local nearest_enemy = nil
-    local min_distance = math.huge
+    -- 如果只有一个敌人，直接返回（无论是否有巫术效果）
+    if #enemies == 1 then
+        local enemy = enemies[1]
+        if enemy:IsAlive() and not enemy:IsNull() then
+            return enemy
+        end
+        return nil
+    end
+    
+    -- 多个敌人时，优先选择没有巫术效果的敌人
+    local enemies_without_hex = {}
+    local enemies_with_hex = {}
     
     for _, enemy in pairs(enemies) do
         if enemy:IsAlive() and not enemy:IsNull() then
-            local distance = (enemy:GetAbsOrigin() - caster:GetAbsOrigin()):Length()
-            if distance < min_distance then
-                min_distance = distance
-                nearest_enemy = enemy
+            local has_hex = enemy:HasModifier("modifier_lion_hex")
+            if has_hex then
+                table.insert(enemies_with_hex, enemy)
+            else
+                table.insert(enemies_without_hex, enemy)
             end
         end
     end
     
-    if nearest_enemy then
-    else
+    -- 优先选择没有巫术效果的敌人
+    local target_enemies = #enemies_without_hex > 0 and enemies_without_hex or enemies_with_hex
+    
+    -- 在目标敌人中找到距离最近的
+    local nearest_enemy = nil
+    local min_distance = math.huge
+    
+    for _, enemy in pairs(target_enemies) do
+        local distance = (enemy:GetAbsOrigin() - caster:GetAbsOrigin()):Length()
+        if distance < min_distance then
+            min_distance = distance
+            nearest_enemy = enemy
+        end
     end
     
     return nearest_enemy

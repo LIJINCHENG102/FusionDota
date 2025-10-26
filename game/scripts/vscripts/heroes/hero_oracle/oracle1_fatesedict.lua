@@ -27,10 +27,11 @@ function oracle1_fatesedict:OnUpgrade()
                 return
             end
             
+            -- 移除冷却时间限制，实现真正的0CD
             local current_time = GameRules:GetGameTime()
-            if current_time - self.last_cast_time < 1.0 then
-                return 0.5
-            end
+            -- if current_time - self.last_cast_time < 1.0 then
+            --     return 0.5
+            -- end
             
             local current_mana = caster:GetMana()
             local max_mana = caster:GetMaxMana()
@@ -153,7 +154,7 @@ function oracle1_fatesedict:OnSpellStart()
     EmitSoundOn("Hero_Oracle.FatesEdict", caster)
 end
 
--- 找到距离最近的敌方单位
+-- 找到距离最近的敌方单位（智能选择）
 function oracle1_fatesedict:FindNearestEnemy(caster, radius)
     local enemies = FindUnitsInRadius(
         caster:GetTeamNumber(),
@@ -163,19 +164,57 @@ function oracle1_fatesedict:FindNearestEnemy(caster, radius)
         DOTA_UNIT_TARGET_TEAM_ENEMY,
         DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
         DOTA_UNIT_TARGET_FLAG_NONE,
-        FIND_CLOSEST,
+        FIND_ANY_ORDER,
         false
     )
     
-    
-    if #enemies > 0 then
-        return enemies[1]  -- 返回最近的敌方单位
+    if #enemies == 0 then
+        return nil
     end
     
-    return nil
+    -- 如果只有一个敌人，直接返回（无论是否有缴械效果）
+    if #enemies == 1 then
+        local enemy = enemies[1]
+        if enemy:IsAlive() and not enemy:IsNull() then
+            return enemy
+        end
+        return nil
+    end
+    
+    -- 多个敌人时，优先选择没有缴械效果的敌人
+    local enemies_without_disarm = {}
+    local enemies_with_disarm = {}
+    
+    for _, enemy in pairs(enemies) do
+        if enemy:IsAlive() and not enemy:IsNull() then
+            local has_disarm = enemy:HasModifier("modifier_oracle1_fatesedict_enemy")
+            if has_disarm then
+                table.insert(enemies_with_disarm, enemy)
+            else
+                table.insert(enemies_without_disarm, enemy)
+            end
+        end
+    end
+    
+    -- 优先选择没有缴械效果的敌人
+    local target_enemies = #enemies_without_disarm > 0 and enemies_without_disarm or enemies_with_disarm
+    
+    -- 在目标敌人中找到距离最近的
+    local nearest_enemy = nil
+    local min_distance = math.huge
+    
+    for _, enemy in pairs(target_enemies) do
+        local distance = (enemy:GetAbsOrigin() - caster:GetAbsOrigin()):Length()
+        if distance < min_distance then
+            min_distance = distance
+            nearest_enemy = enemy
+        end
+    end
+    
+    return nearest_enemy
 end
 
--- 找到距离指定目标最近的友方单位
+-- 找到距离指定目标最近的友方单位（智能选择）
 function oracle1_fatesedict:FindNearestAllyToTarget(target, radius)
     local allies = FindUnitsInRadius(
         self:GetCaster():GetTeamNumber(),  -- 使用施法者的团队，而不是目标的团队
@@ -185,15 +224,54 @@ function oracle1_fatesedict:FindNearestAllyToTarget(target, radius)
         DOTA_UNIT_TARGET_TEAM_FRIENDLY,
         DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
         DOTA_UNIT_TARGET_FLAG_NONE,
-        FIND_CLOSEST,
+        FIND_ANY_ORDER,
         false
     )
     
-    if #allies > 0 then
-        return allies[1]  -- 返回距离目标最近的友方单位
+    if #allies == 0 then
+        return nil
     end
     
-    return nil
+    -- 如果只有一个友军，直接返回（无论是否有增益效果）
+    if #allies == 1 then
+        local ally = allies[1]
+        if ally:IsAlive() and not ally:IsNull() then
+            return ally
+        end
+        return nil
+    end
+    
+    -- 多个友军时，优先选择没有增益效果的友军
+    local allies_without_buff = {}
+    local allies_with_buff = {}
+    
+    for _, ally in pairs(allies) do
+        if ally:IsAlive() and not ally:IsNull() then
+            local has_buff = ally:HasModifier("modifier_oracle1_fatesedict_ally")
+            if has_buff then
+                table.insert(allies_with_buff, ally)
+            else
+                table.insert(allies_without_buff, ally)
+            end
+        end
+    end
+    
+    -- 优先选择没有增益效果的友军
+    local target_allies = #allies_without_buff > 0 and allies_without_buff or allies_with_buff
+    
+    -- 在目标友军中找到距离最近的
+    local nearest_ally = nil
+    local min_distance = math.huge
+    
+    for _, ally in pairs(target_allies) do
+        local distance = (ally:GetAbsOrigin() - target:GetAbsOrigin()):Length()
+        if distance < min_distance then
+            min_distance = distance
+            nearest_ally = ally
+        end
+    end
+    
+    return nearest_ally
 end
 
 -- 敌方单位缴械效果modifier
