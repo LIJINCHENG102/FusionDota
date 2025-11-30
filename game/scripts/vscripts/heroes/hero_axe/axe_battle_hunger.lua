@@ -136,8 +136,8 @@ function modifier_axe_battle_hunger_custom:OnAttackLanded(params)
         local lifesteal_per_health_percent = ability:GetSpecialValueFor("lifesteal_per_health_percent")
         local lifesteal_bonus = missing_health_pct * lifesteal_per_health_percent
         
-        -- 如果生命值损失超过10%，提供吸血效果
-        if missing_health_pct > 10 and lifesteal_bonus > 0 then
+        -- 只要有血量损失就提供吸血效果
+        if lifesteal_bonus > 0 then
             -- 计算吸血量（基于攻击伤害）
             local attack_damage = parent:GetAttackDamage()
             local lifesteal_amount = attack_damage * (lifesteal_bonus / 100)

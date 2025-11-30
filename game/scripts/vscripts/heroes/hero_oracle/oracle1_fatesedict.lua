@@ -87,15 +87,7 @@ function oracle1_fatesedict:OnSpellStart()
     local disarm_duration = self:GetSpecialValueFor("enemy_disarm_duration")
     nearest_enemy:AddNewModifier(caster, self, "modifier_oracle1_fatesedict_enemy", {duration = disarm_duration})
     
-    -- 播放特效
-    local particle = ParticleManager:CreateParticle("particles/heroes/oracle/oracle_fatesedict.vpcf", PATTACH_ABSORIGIN_FOLLOW, nearest_enemy)
-    ParticleManager:SetParticleControl(particle, 0, nearest_enemy:GetAbsOrigin())
-    
-    -- 将粒子特效与modifier绑定，确保在modifier销毁时自动清理
-    local modifier = nearest_enemy:FindModifierByName("modifier_oracle1_fatesedict_enemy")
-    if modifier then
-        modifier:AddParticle(particle, false, false, -1, false, false)
-    end
+    -- 敌方特效交由 modifier 显示/管理，避免在被反制时出现无主粒子残留
     
     
     -- 第二步：找到距离这名敌方单位最近的友方单位
@@ -115,15 +107,7 @@ function oracle1_fatesedict:OnSpellStart()
         
         nearest_ally_to_enemy:AddNewModifier(caster, self, "modifier_oracle1_fatesedict_ally", modifier_data)
         
-        -- 播放特效
-        local particle = ParticleManager:CreateParticle("particles/heroes/oracle/oracle_fatesedict.vpcf", PATTACH_ABSORIGIN_FOLLOW, nearest_ally_to_enemy)
-        ParticleManager:SetParticleControl(particle, 0, nearest_ally_to_enemy:GetAbsOrigin())
-        
-        -- 将粒子特效与modifier绑定，确保在modifier销毁时自动清理
-        local modifier = nearest_ally_to_enemy:FindModifierByName("modifier_oracle1_fatesedict_ally")
-        if modifier then
-            modifier:AddParticle(particle, false, false, -1, false, false)
-        end
+        -- 友方特效由 ally 修饰器在 OnCreated 中创建与管理
         
     else
         -- 如果敌人周围没有友军，增益buff给到施法者自己
@@ -138,15 +122,7 @@ function oracle1_fatesedict:OnSpellStart()
         
         caster:AddNewModifier(caster, self, "modifier_oracle1_fatesedict_ally", modifier_data)
         
-        -- 播放特效
-        local particle = ParticleManager:CreateParticle("particles/heroes/oracle/oracle_fatesedict.vpcf", PATTACH_ABSORIGIN_FOLLOW, caster)
-        ParticleManager:SetParticleControl(particle, 0, caster:GetAbsOrigin())
-        
-        -- 将粒子特效与modifier绑定，确保在modifier销毁时自动清理
-        local modifier = caster:FindModifierByName("modifier_oracle1_fatesedict_ally")
-        if modifier then
-            modifier:AddParticle(particle, false, false, -1, false, false)
-        end
+        -- 友方特效由 ally 修饰器在 OnCreated 中创建与管理
         
     end
     
@@ -302,6 +278,14 @@ end
 
 function modifier_oracle1_fatesedict_enemy:GetModifierAttackSpeedBonus_Constant()
     return -1000  -- 大幅降低攻击速度，确保无法攻击
+end
+
+-- 敌方缴械主体粒子：在修饰器创建时生成并托管，确保被反制时不会创建
+function modifier_oracle1_fatesedict_enemy:OnCreated()
+    if not IsServer() then return end
+    self._fx = ParticleManager:CreateParticle("particles/heroes/oracle/oracle_fatesedict.vpcf", PATTACH_ABSORIGIN_FOLLOW, self:GetParent())
+    ParticleManager:SetParticleControl(self._fx, 0, self:GetParent():GetAbsOrigin())
+    self:AddParticle(self._fx, false, false, -1, false, false)
 end
 
 -- 缴械debuff的头顶粒子特效

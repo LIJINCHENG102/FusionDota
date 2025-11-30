@@ -19,6 +19,8 @@ function GameMode:InitGameMode()
     -- 注册监听单位出生事件
     ListenToGameEvent("npc_spawned", Dynamic_Wrap(GameMode, "OnNPCSpawned"), self)
 
+    -- 过滤器改由相关技能自行注册
+
     -- 注册装饰品获取命令
     self:RegisterWearableCommands()
 
@@ -127,6 +129,13 @@ function GameMode:OnNPCSpawned(event)
                 end
             end
         end
+end
+
+-- 伤害过滤器：当单位拥有反法护盾时，仅阻挡一次“技能造成的瞬时伤害”。
+-- 规则：
+-- 1) 仅当有 inflictor（技能）时考虑拦截；攻击/环境伤害不拦截。
+-- 2) 若判定为持续性debuff/周期性伤害，则不拦截。
+-- 3) 对于同一技能的持续过程（如黑洞的多段伤害），仅在第一次命中时拦截一次（随后护盾被移除）。
 end
 
 function TestModelLoading(unit)
